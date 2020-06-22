@@ -136,10 +136,10 @@ public class FaceDetectionActivity extends VideoBaseActivity {
         mDrawSurfaceHolder = drawView.getHolder();
 
         // 点序
-        mOrderSwitch = findViewById(R.id.swPointOrder);
+//        mOrderSwitch = findViewById(R.id.swPointOrder);
         mTimeCost = findViewById(R.id.costTime);
-        mFaceAction = findViewById(R.id.faceAction);
-        mYPR = findViewById(R.id.ypr);
+//        mFaceAction = findViewById(R.id.faceAction);
+//        mYPR = findViewById(R.id.ypr);
 
         mCameraView = findViewById(R.id.camera_view);
 
@@ -199,13 +199,13 @@ public class FaceDetectionActivity extends VideoBaseActivity {
 
                     RelativeLayout.LayoutParams yprLayoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
                     yprLayoutParams.addRule(RelativeLayout.BELOW, R.id.costTime);
-                    mYPR.setPadding(24,0,0,0);
-                    mYPR.setLayoutParams(yprLayoutParams);
+//                    mYPR.setPadding(24,0,0,0);
+//                    mYPR.setLayoutParams(yprLayoutParams);
 
                     RelativeLayout.LayoutParams faceActionLayoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                    faceActionLayoutParams.addRule(RelativeLayout.BELOW, R.id.ypr);
-                    mFaceAction.setPadding(24,0,0,0);
-                    mFaceAction.setLayoutParams(faceActionLayoutParams);
+//                    faceActionLayoutParams.addRule(RelativeLayout.BELOW, R.id.ypr);
+//                    mFaceAction.setPadding(24,0,0,0);
+//                    mFaceAction.setLayoutParams(faceActionLayoutParams);
                 }
 
             }
@@ -259,9 +259,9 @@ public class FaceDetectionActivity extends VideoBaseActivity {
 
                 }
 
-                mTimeCost.setText(timeCostText);
-                mYPR.setText(yprText);
-                mFaceAction.setText(faceActionText);
+//                mTimeCost.setText(timeCostText);
+//                mYPR.setText(yprText);
+//                mFaceAction.setText(faceActionText);
 
                 DrawResult(scores, rects, keypts, faceCount, cameraOrientation, rotateDegree);
             }
@@ -359,9 +359,9 @@ public class FaceDetectionActivity extends VideoBaseActivity {
                     float keyX = facePoints[i*106*2 + j*2];
                     float keyY = facePoints[i*106*2 + j*2 + 1];
                     canvas.drawCircle(keyX * kx, keyY * ky, 4.0f, KeyPointsPaint);
-                    if (mOrderSwitch.isChecked()) {
-                        canvas.drawText(j+"", keyX * kx, keyY * ky, PointOrderPaint); //标注106点的索引位置
-                    }
+//                    if (mOrderSwitch.isChecked()) {
+//                        canvas.drawText(j+"", keyX * kx, keyY * ky, PointOrderPaint); //标注106点的索引位置
+//                    }
                 }
 
                 float left = rects[0];
