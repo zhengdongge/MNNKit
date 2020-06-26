@@ -60,6 +60,10 @@ public class FaceDetectionActivity extends VideoBaseActivity {
     private float[] rects = new float[MAX_RESULT * 4];// 矩形区域
     private float[] keypts = new float[MAX_RESULT * 2 * 106];// 脸106关键点
 
+    private int countUpdate = 0;
+    private FaceDetectionReport firstReport;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,7 +77,7 @@ public class FaceDetectionActivity extends VideoBaseActivity {
         PointOrderPaint.setStrokeWidth(2f);
         PointOrderPaint.setTextSize(18);
 
-        ScorePaint.setColor(Color.WHITE);
+        ScorePaint.setColor(Color.RED);
         ScorePaint.setStrokeWidth(2f);
         ScorePaint.setTextSize(40);
 
@@ -241,7 +245,7 @@ public class FaceDetectionActivity extends VideoBaseActivity {
                     // time cost
                     timeCostText = (System.currentTimeMillis() - start)+"ms";
                     // ypr
-                    FaceDetectionReport firstReport = results[0];
+                    firstReport = results[0];
                     yprText = "yaw: " + firstReport.yaw + "\npitch: " + firstReport.pitch + "\nroll: " + firstReport.roll + "\n";
 
                     for (int i=0; i<results.length&&i<MAX_RESULT; i++) {
@@ -261,7 +265,7 @@ public class FaceDetectionActivity extends VideoBaseActivity {
                 }
 
 //                mTimeCost.setText(timeCostText);
-                mYPR.setText(yprText);
+//                mYPR.setText(yprText);
 //                Log.i("vuroface",yprText);
 //                mFaceAction.setText(faceActionText);
 
@@ -385,7 +389,8 @@ public class FaceDetectionActivity extends VideoBaseActivity {
 
                 }
 
-                rightEyeAspectRatio(facePoints,i);
+                float rightEyeAspectRatio = rightEyeAspectRatio(facePoints, i);
+                float leftEyeAspectRatio = leftEyeAspectRatio(facePoints, i);
 
                 float left = rects[0];
                 float top = rects[1];
@@ -402,6 +407,15 @@ public class FaceDetectionActivity extends VideoBaseActivity {
 
 
                 canvas.drawText(scores[i]+"", left * kx, top * ky-10, ScorePaint);
+                if (countUpdate >= 0) {
+                    canvas.drawText("REAR: " + rightEyeAspectRatio * 300, 20, 50, ScorePaint);
+                    canvas.drawText("LEAR: " + leftEyeAspectRatio * 300, 20, 100, ScorePaint);
+                    canvas.drawText("yaw: " + firstReport.yaw * 100, 20, 150, ScorePaint);
+                    canvas.drawText("pitch: " + firstReport.pitch * 100, 20, 200, ScorePaint);
+                    canvas.drawText("roll: " + firstReport.roll *100, 20, 250, ScorePaint);
+                    countUpdate = 0;
+                }
+                else {countUpdate ++;}
             }
 
         } catch (Throwable t) {
@@ -415,15 +429,18 @@ public class FaceDetectionActivity extends VideoBaseActivity {
 
     private static float rightEyeAspectRatio(float[] facePoints, int i){
         float rightEyeTotalHeight = landmarkDistance(facePoints,i,59,63) + landmarkDistance(facePoints,i,60,62);
-        float rightEyeAspectRatio = rightEyeTotalHeight /2* landmarkDistance(facePoints,i,58,61);
-        Log.i("vuroface", "rightEyeAspectRatio = " + rightEyeAspectRatio);
+        float rightEyeAspectRatio = rightEyeTotalHeight /(2 * landmarkDistance(facePoints,i,58,61));
+//        Log.i("vuroface", "rightEyeAspectRatio = " + rightEyeAspectRatio);
+//        Log.i("vuroface", "rightEyeTotalHeight = " + rightEyeTotalHeight);
+//        Log.i("vuroface", "rightEyeTotalLength = " + 2* landmarkDistance(facePoints,i,58,61));
+
         return rightEyeAspectRatio;
     }
 
     private static float leftEyeAspectRatio(float[] facePoints, int i){
         float leftEyeTotalHeight = landmarkDistance(facePoints,i,53,57) + landmarkDistance(facePoints,i,54,56);
-        float leftEyeAspectRatio = leftEyeTotalHeight /2* landmarkDistance(facePoints,i,52,55);
-        Log.i("vuroface", "leftEyeAspectRatio = " + leftEyeAspectRatio);
+        float leftEyeAspectRatio = leftEyeTotalHeight /(2* landmarkDistance(facePoints,i,52,55));
+//        Log.i("vuroface", "leftEyeAspectRatio = " + leftEyeAspectRatio);
         return leftEyeAspectRatio;
     }
 
