@@ -137,9 +137,9 @@ public class FaceDetectionActivity extends VideoBaseActivity {
 
         // 点序
 //        mOrderSwitch = findViewById(R.id.swPointOrder);
-        mTimeCost = findViewById(R.id.costTime);
-//        mFaceAction = findViewById(R.id.faceAction);
-//        mYPR = findViewById(R.id.ypr);
+        //mTimeCost = findViewById(R.id.costTime);
+        mFaceAction = findViewById(R.id.faceAction);
+        mYPR = findViewById(R.id.ypr);
 
         mCameraView = findViewById(R.id.camera_view);
 
@@ -199,13 +199,14 @@ public class FaceDetectionActivity extends VideoBaseActivity {
 
                     RelativeLayout.LayoutParams yprLayoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
                     yprLayoutParams.addRule(RelativeLayout.BELOW, R.id.costTime);
-//                    mYPR.setPadding(24,0,0,0);
-//                    mYPR.setLayoutParams(yprLayoutParams);
+                    mYPR.setPadding(24,0,0,0);
+                    mYPR.setLayoutParams(yprLayoutParams);
 
                     RelativeLayout.LayoutParams faceActionLayoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-//                    faceActionLayoutParams.addRule(RelativeLayout.BELOW, R.id.ypr);
-//                    mFaceAction.setPadding(24,0,0,0);
-//                    mFaceAction.setLayoutParams(faceActionLayoutParams);
+                    faceActionLayoutParams.addRule(RelativeLayout.BELOW, R.id.ypr);
+
+                    mFaceAction.setPadding(24,0,0,0);
+                    mFaceAction.setLayoutParams(faceActionLayoutParams);
                 }
 
             }
@@ -260,7 +261,8 @@ public class FaceDetectionActivity extends VideoBaseActivity {
                 }
 
 //                mTimeCost.setText(timeCostText);
-//                mYPR.setText(yprText);
+                mYPR.setText(yprText);
+//                Log.i("vuroface",yprText);
 //                mFaceAction.setText(faceActionText);
 
                 DrawResult(scores, rects, keypts, faceCount, cameraOrientation, rotateDegree);
@@ -285,21 +287,24 @@ public class FaceDetectionActivity extends VideoBaseActivity {
             Boolean bActing = entry.getValue();
             if (!bActing) continue;
 
-            if (entry.getKey().equals("HeadYaw")) {
-                actions.add("摇头");
-            }
-            if (entry.getKey().equals("BrowJump")) {
-                actions.add("眉毛挑动");
-            }
+//            if (entry.getKey().equals("HeadYaw")) {
+//                actions.add("摇头");
+//            }
+//            if (entry.getKey().equals("BrowJump")) {
+//                actions.add("眉毛挑动");
+//            }
             if (entry.getKey().equals("EyeBlink")) {
-                actions.add("眨眼");
+                actions.add("Blink");
             }
-            if (entry.getKey().equals("MouthAh")) {
-                actions.add("嘴巴大张");
+            else {
+                actions.add("No Blink");
             }
-            if (entry.getKey().equals("HeadPitch")) {
-                actions.add("点头");
-            }
+//            if (entry.getKey().equals("MouthAh")) {
+//                actions.add("嘴巴大张");
+//            }
+//            if (entry.getKey().equals("HeadPitch")) {
+//                actions.add("点头");
+//            }
         }
 
         for (int i=0; i<actions.size(); i++) {
@@ -362,7 +367,25 @@ public class FaceDetectionActivity extends VideoBaseActivity {
 //                    if (mOrderSwitch.isChecked()) {
 //                        canvas.drawText(j+"", keyX * kx, keyY * ky, PointOrderPaint); //标注106点的索引位置
 //                    }
+
+//                    switch(j) {
+//                        case 263:
+//                            landmark_263 = landmark;
+//                            break;
+//                        case 362:
+//                            landmark_362 = landmark;
+//                            break;
+//                        case 374:
+//                            landmark_374 = landmark;
+//                            break;
+//                        case 386:
+//                            landmark_386 = landmark;
+//                            break;
+//                    }
+
                 }
+
+                rightEyeAspectRatio(facePoints,i);
 
                 float left = rects[0];
                 float top = rects[1];
@@ -388,6 +411,28 @@ public class FaceDetectionActivity extends VideoBaseActivity {
                 mDrawSurfaceHolder.unlockCanvasAndPost(canvas);
             }
         }
+    }
+
+    private static float rightEyeAspectRatio(float[] facePoints, int i){
+        float rightEyeTotalHeight = landmarkDistance(facePoints,i,59,63) + landmarkDistance(facePoints,i,60,62);
+        float rightEyeAspectRatio = rightEyeTotalHeight /2* landmarkDistance(facePoints,i,58,61);
+        Log.i("vuroface", "rightEyeAspectRatio = " + rightEyeAspectRatio);
+        return rightEyeAspectRatio;
+    }
+
+    private static float leftEyeAspectRatio(float[] facePoints, int i){
+        float leftEyeTotalHeight = landmarkDistance(facePoints,i,53,57) + landmarkDistance(facePoints,i,54,56);
+        float leftEyeAspectRatio = leftEyeTotalHeight /2* landmarkDistance(facePoints,i,52,55);
+        Log.i("vuroface", "leftEyeAspectRatio = " + leftEyeAspectRatio);
+        return leftEyeAspectRatio;
+    }
+
+    private static float landmarkDistance (float[] facePoints,int i, int landmark_a, int landmark_b){
+        float distance = (float) Math.sqrt(
+                Math.pow(facePoints[i*106*2 + landmark_a*2]-facePoints[i*106*2 + landmark_b*2],2) +
+                Math.pow(facePoints[i*106*2 + landmark_a*2 + 1]-facePoints[i*106*2 + landmark_b*2 + 1],2)
+        );
+        return distance;
     }
 
 }
